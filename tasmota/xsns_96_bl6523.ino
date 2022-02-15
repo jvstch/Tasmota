@@ -34,6 +34,12 @@
  *    BL6523 RX ->1KOhm-> ESP IO4 (Should be Input Capable)
  *    BL6523 TX ->1KOhm-> ESP IO5 (Should be Input Capable)
  *    BL6523 GND -> ESP GND
+ * 
+ * To build add the below to user_config_override.h
+ * #define USE_BL6523       // Add support for Chinese BL6523 based Watt hour meter (+1k code)¸
+ * 
+ * After Installation use the below template sample:
+ * {"NAME":"BL6523 Smart Meter","GPIO":[0,0,0,0,7488,7520,0,0,0,0,0,0,0,0],"FLAG":0,"BASE":18}
 \*********************************************************************************************/
 
 #define XSNS_96 96
