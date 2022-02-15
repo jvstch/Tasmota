@@ -16,7 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#ifdef USE_ENERGY_SENSOR
 #ifdef USE_BL6523
 /*********************************************************************************************\
  * Chinese BL6523  based Watt hour meter
@@ -42,7 +42,7 @@
  * {"NAME":"BL6523 Smart Meter","GPIO":[0,0,0,0,7488,7520,0,0,0,0,0,0,0,0],"FLAG":0,"BASE":18}
 \*********************************************************************************************/
 
-#define XSNS_96 96
+#define XNRG_22 22
 
 #include <TasmotaSerial.h>
 
@@ -250,7 +250,7 @@ const char HTTP_BL6523_SNS[] PROGMEM = "{s}       %s  {m}%s {e}"; // {s} = <tr><
 void Bl6523Show(bool json)
 {
   uint32_t powf_word = 0;
-  float amps = 0.0f, volts = 0.0f, freq = 0.0f, watts = 0.0f, powf = 0.0f, watthr = 0 .0f;
+  float amps = 0.0f, volts = 0.0f, freq = 0.0f, watts = 0.0f, powf = 0.0f, watthr = 0.0f;
   char amps_str[12], volts_str[12], freq_str[12];
   char watts_str[12], powf_str[12], watthr_str[12];
 
@@ -266,12 +266,12 @@ void Bl6523Show(bool json)
        Eg., reg value  0x7FFFFF(HEX) -> PF 1, 0x800000(HEX) -> -1, 0x400000(HEX) -> 0.5
     */
    powf = 0.0f;
-   powf_word = Bl6523.powf & 0x7fffff; //Extract the 23 bits
+   powf_word = (Bl6523.powf >> 23) ? ~(Bl6523.powf & 0x7fffff) : Bl6523.powf & 0x7fffff; //Extract the 23 bits and invert if sign bit(24) is set
    for (int i = 0; i < 23; i++){ // Accumulate powf from 23 bits
     powf += ((powf_word >> (22-i)) * pow(2,(0-(i+1)))); 
     powf_word = powf_word & (0x7fffff >> (1+i));
    }
-   powf = (Bl6523.powf >> 23) ? (0.0f - (~powf)) : powf; // Negate if sign bit(24) is set
+   powf = (Bl6523.powf >> 23) ? (0.0f - (powf)) : powf; // Negate if sign bit(24) is set
    
    watthr = (float)Bl6523.watthr / BL6523_DIV_WATTHR;
 
@@ -323,12 +323,16 @@ void Bl6523Show(bool json)
  * Interface
 \*********************************************************************************************/
 
-bool Xsns96(uint8_t function)
+bool Xnrg22(uint8_t function)
 {
   bool result = false;
-
-  if (Bl6523.type)
-  {
+  
+if ( FUNC_INIT == function )
+{
+   Bl6523Init();
+}
+else if ( Bl6523.type ) 
+   {
     switch (function)
     {
     case FUNC_EVERY_250_MSECOND:
@@ -342,12 +346,10 @@ bool Xsns96(uint8_t function)
       Bl6523Show(0);
       break;
 #endif // USE_WEBSERVER
-    case FUNC_INIT:
-      Bl6523Init();
-      break;
     }
   }
   return result;
 }
 
 #endif // USE_BL6523
+#endif  // USE_ENERGY_SENSOR

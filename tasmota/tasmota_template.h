@@ -172,7 +172,6 @@ enum UserSelectablePins {
   GPIO_MCP2515_CS,                     // MCP2515 Chip Select
   GPIO_HRG15_TX, GPIO_HRG15_RX,        // Hydreon RG-15 rain sensor serial interface
   GPIO_VINDRIKTNING_RX,                // IKEA VINDRIKTNING Serial interface
-  GPIO_BL6523_TX, GPIO_BL6523_RX,                      // BL6523 based Watt meter Serial interface
   GPIO_BL0939_RX,                      // BL0939 Serial interface (Dual R3 v2)
   GPIO_BL0942_RX,                      // BL0942 Serial interface
   GPIO_HM330X_SET,                     // HM330X SET pin (sleep when low)
@@ -183,6 +182,7 @@ enum UserSelectablePins {
   GPIO_SDM230_TX, GPIO_SDM230_RX,      // SDM230 Serial interface
   GPIO_ADC_MQ,                         // Analog MQ Sensor
   GPIO_CM11_TXD, GPIO_CM11_RXD,        // CM11 Serial interface
+  GPIO_BL6523_TX, GPIO_BL6523_RX,      // BL6523 based Watt meter Serial interface
   GPIO_SENSOR_END };
 
 enum ProgramSelectablePins {
@@ -394,7 +394,6 @@ const char kSensorNames[] PROGMEM =
   D_SENSOR_MCP2515_CS "|"
   D_SENSOR_HRG15_TX "|" D_SENSOR_HRG15_RX "|"
   D_SENSOR_VINDRIKTNING_RX "|"
-  D_SENSOR_BL6523_TX "|" D_SENSOR_BL6523_RX "|"
   D_SENSOR_BL0939_RX "|"
   D_SENSOR_BL0942_RX "|"
   D_SENSOR_HM330X_SET "|"
@@ -405,6 +404,7 @@ const char kSensorNames[] PROGMEM =
   D_SENSOR_SDM230_TX "|" D_SENSOR_SDM230_RX "|"
   D_SENSOR_ADC_MQ "|"
   D_SENSOR_CM11_TX "|" D_SENSOR_CM11_RX "|"
+  D_SENSOR_BL6523_TX "|" D_SENSOR_BL6523_RX "|"
   ;
 
 const char kSensorNamesFixed[] PROGMEM =
@@ -772,6 +772,10 @@ const uint16_t kGpioNiceList[] PROGMEM = {
   AGPIO(GPIO_SDM230_TX),      // SDM230 Serial interface
   AGPIO(GPIO_SDM230_RX),      // SDM230 Serial interface
 #endif
+#ifdef USE_BL6523
+  AGPIO(GPIO_BL6523_TX),       // BL6523 based Watt meter Serial interface
+  AGPIO(GPIO_BL6523_RX),       // BL6523 based Watt meter Serial interface
+#endif
 #endif  // USE_ENERGY_SENSOR
 
 /*-------------------------------------------------------------------------------------------*\
@@ -813,10 +817,6 @@ const uint16_t kGpioNiceList[] PROGMEM = {
 #endif
 #ifdef USE_VINDRIKTNING
   AGPIO(GPIO_VINDRIKTNING_RX),
-#endif
-#ifdef USE_BL6523
-  AGPIO(GPIO_BL6523_TX),
-  AGPIO(GPIO_BL6523_RX),
 #endif
 #ifdef USE_HM330X
   AGPIO(GPIO_HM330X_SET),     // HM330X Sleep pin (active low)
